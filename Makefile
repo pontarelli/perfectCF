@@ -2,10 +2,9 @@ SRCDIR=src
 OBJDIR=obj
 CXX=g++
 EXE= perfectCF
+EXE2= LPMstat
 SRC=$(shell ls -R $(SRCDIR)/*.c*)
 OBJ=$(SRC:$(SRCDIR)/%.cpp=$(OBJDIR)/%.o)
-OBJ_MAIN=$(EXE:%=$(OBJDIR)/%.o )
-OBJ_COMMON=$(filter-out $(OBJ_MAIN),$(OBJ))
 
 MD5VAL="$(shell md5sum src/*.cpp)"
 COMPILE_TIME_VAL=$(shell date)
@@ -20,10 +19,14 @@ ERROR_COLOR=\x1b[31;01m
 WARN_COLOR=\x1b[33;01m
 OK_STRING=$(OK_COLOR)[OK]$(NO_COLOR)
 
-all: $(EXE)
+all: $(EXE) $(EXE2)
 
 $(EXE): $(OBJDIR) $(OBJ)
-	@$(CXX) $(OBJ_COMMON) obj/$@.o -o $@    
+	@g++ obj/CF.o obj/city.o obj/crc.o obj/utils.o obj/xxhash.o obj/perfectCF.o -o perfectCF    
+	@echo -e '$(OK_COLOR)[*] Created executable  $@ $(NO_COLOR)'
+
+$(EXE2): $(OBJDIR) $(OBJ)
+	@g++ obj/LPMstat.o -o  $@    
 	@echo -e '$(OK_COLOR)[*] Created executable  $@ $(NO_COLOR)'
 
 $(OBJDIR):
@@ -34,6 +37,6 @@ $(OBJDIR)/%.o: $(SRCDIR)/%.cpp
 	@echo "[*] Compiled" $<
 
 clean:
-	@rm -f $(EXE) $(OBJ)
+	@rm -f $(EXE) $(EXE2) $(OBJ)
 	@echo "[*] Directory $(CURDIR) cleaned"
 
